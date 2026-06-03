@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { ArrowLeft, Flame, MapPin, RefreshCcw, Thermometer } from "lucide-react";
 import { FeatureMotionDirector } from "@/components/motion/feature-motion-director";
+import { FeatureStatusCard } from "@/components/motion/feature-status-card";
 import { getCurrentTraffic, getTrafficHeatmap, type TrafficSnapshot } from "@/lib/member-api";
 import "../feature-placeholder.css";
 
@@ -54,7 +55,8 @@ export default function VenuePage() {
             <p>实时人流与区域热力，帮你避开最拥挤的训练时段。</p>
           </div>
 
-          {error ? <p className="feature-error">{error}</p> : null}
+          {error ? <FeatureStatusCard kind="error" title="场馆热力暂时没接上" detail={error} /> : null}
+          {loading ? <FeatureStatusCard title="场馆地图正在点亮" detail="正在同步实时人流和全天热力样本。" /> : null}
 
           <div className="feature-toolbar">
             <button type="button" onClick={load} disabled={loading}><RefreshCcw size={16} />刷新</button>

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ArrowLeft, CreditCard, Crown, Sparkles, Zap } from "lucide-react";
 import { FeatureMotionDirector } from "@/components/motion/feature-motion-director";
+import { FeatureStatusCard } from "@/components/motion/feature-status-card";
 import {
   buyMemberCard,
   getMemberProfile,
@@ -124,8 +125,9 @@ export default function MembershipPage() {
             <p>选择计划、充值钱包、购买会员卡。当前卡片状态与余额一目了然。</p>
           </div>
 
-          {error ? <p className="feature-error">{error}</p> : null}
-          {success ? <p className="feature-error" style={{ color: "var(--green)" }}>{success}</p> : null}
+          {error ? <FeatureStatusCard kind="error" title="会员卡数据暂时没接上" detail={error} /> : null}
+          {success ? <FeatureStatusCard kind="success" title="会员操作已完成" detail={success} /> : null}
+          {loading ? <FeatureStatusCard title="会员卡片正在盖章" detail="正在确认账户、钱包和有效会员卡状态。" /> : null}
 
           <div className="feature-grid three">
             <article className="feature-data"><span>当前会员卡</span><h2>{card?.cardType ?? "无"}</h2><p>{card?.expireDate ? `至 ${card.expireDate.slice(0, 10)}` : "未激活"}</p></article>

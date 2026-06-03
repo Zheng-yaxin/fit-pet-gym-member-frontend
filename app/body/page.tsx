@@ -4,6 +4,7 @@ import Link from "next/link";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { ArrowLeft, LineChart, Save } from "lucide-react";
 import { FeatureMotionDirector } from "@/components/motion/feature-motion-director";
+import { FeatureStatusCard } from "@/components/motion/feature-status-card";
 import { getHealthDataHistory, getLatestHealthData, saveHealthData, type HealthData } from "@/lib/member-api";
 import { calculateAge } from "@/lib/home-model";
 import "../feature-placeholder.css";
@@ -95,7 +96,8 @@ export default function BodyPage() {
             <p>维护身高、体重、体脂率，查看精美动画趋势图。</p>
           </div>
 
-          {error ? <p className="feature-error">{error}</p> : null}
+          {error ? <FeatureStatusCard kind="error" title="身体记录暂时没接上" detail={error} /> : null}
+          {loading ? <FeatureStatusCard title="体测仪正在校准" detail="正在读取最近一次身体数据和历史曲线。" /> : null}
 
           <div className="feature-grid four">
             <article className="feature-data"><span>当前体重</span><h2>{latest?.weight ?? "--"} kg</h2><p>{latest?.measureTime?.slice(0, 10) ?? "暂无"}</p></article>

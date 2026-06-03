@@ -4,6 +4,7 @@ import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
 import { ArrowLeft, Dumbbell, Plus, Save } from "lucide-react";
 import { FeatureMotionDirector } from "@/components/motion/feature-motion-director";
+import { FeatureStatusCard } from "@/components/motion/feature-status-card";
 import {
   addTrainingLog,
   generateTrainingPlan,
@@ -82,8 +83,8 @@ export default function TrainingPage() {
             <p>生成训练计划、记录每日训练日志。</p>
           </div>
 
-          {error ? <p className="feature-error">{error}</p> : null}
-          {loading ? <p className="feature-muted">加载中...</p> : null}
+          {error ? <FeatureStatusCard kind="error" title="训练数据暂时没接上" detail={error} /> : null}
+          {loading ? <FeatureStatusCard title="训练舱正在热身" detail="正在同步计划、日志和今日训练状态。" /> : null}
 
           <div className="feature-grid three">
             <article className="feature-data"><span>当前计划</span><h2>{plan?.name ?? plan?.goal ?? "未生成"}</h2><p>{plan ? `每周 ${plan.weeklyFrequency ?? "--"} 练` : "点击下方生成"}</p></article>

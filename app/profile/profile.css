@@ -275,9 +275,22 @@
 }
 
 .profile-loading span {
+  position: relative;
+  overflow: hidden;
   min-height: 160px;
   border-radius: 20px;
-  background: rgba(32, 36, 45, 0.08);
+  background:
+    radial-gradient(circle at 22% 24%, rgba(246, 200, 76, 0.18), transparent 24%),
+    rgba(32, 36, 45, 0.08);
+}
+
+.profile-loading span::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 0 38%, rgba(255, 255, 255, 0.62) 46%, transparent 54%);
+  transform: translate3d(-58%, 0, 0);
+  animation: profile-loading-sheen 2s var(--fit-ease-out) infinite;
 }
 
 .profile-error {
@@ -384,6 +397,17 @@
   }
 }
 
+@keyframes profile-loading-sheen {
+  0%,
+  42% {
+    transform: translate3d(-58%, 0, 0);
+  }
+
+  100% {
+    transform: translate3d(62%, 0, 0);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .profile-summary::after {
     animation: none;
@@ -399,7 +423,8 @@
 
   .profile-summary::before,
   .profile-tile::before,
-  .profile-form-card::before {
+  .profile-form-card::before,
+  .profile-loading span::after {
     display: none;
   }
 }

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { ArrowLeft, Camera, Flame, Plus, Info, Loader2, Check } from "lucide-react";
 import { FeatureMotionDirector } from "@/components/motion/feature-motion-director";
+import { FeatureStatusCard } from "@/components/motion/feature-status-card";
 import {
   addCustomFood,
   analyzeFoodImage,
@@ -151,7 +152,8 @@ export default function HealthPage() {
         <Link className="feature-back" href="/"><ArrowLeft size={18} />返回首页</Link>
         <section className="feature-panel">
           <div className="feature-heading"><span>Nutrition</span><h1>饮食记录</h1><p>记录每日摄入、维护营养目标，并用图片识别辅助录入。</p></div>
-          {error ? <p className="feature-error">{error}</p> : null}
+          {error ? <FeatureStatusCard kind="error" title="饮食数据暂时没接上" detail={error} /> : null}
+          {loading ? <FeatureStatusCard title="营养小厨房备餐中" detail="正在整理今日摄入、目标差距和食物库。" /> : null}
 
           <div className="feature-toolbar">
             <label>日期<input type="date" value={date} onChange={(e) => setDate(e.target.value)} /></label>

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
 import { ArrowLeft, CalendarCheck, UserRound } from "lucide-react";
 import { FeatureMotionDirector } from "@/components/motion/feature-motion-director";
+import { FeatureStatusCard } from "@/components/motion/feature-status-card";
 import {
   bookPersonalTraining,
   cancelCourseEnrollment,
@@ -169,8 +170,8 @@ export default function CoursesPage() {
             <p>团课预约和私教预约共用一个入口，所有状态来自后端。</p>
           </div>
 
-          {error ? <p className="feature-error">{error}</p> : null}
-          {loading ? <p className="feature-muted">正在加载课程和教练...</p> : null}
+          {error ? <FeatureStatusCard kind="error" title="课程排班暂时没接上" detail={error} /> : null}
+          {loading ? <FeatureStatusCard title="课程板正在翻页" detail="正在同步团课、教练和私教时段。" /> : null}
 
           <div className="feature-grid three">
             <article className="feature-data"><span>可选课程</span><h2>{courses.length}</h2><p>数据源：/member/course/list</p></article>
