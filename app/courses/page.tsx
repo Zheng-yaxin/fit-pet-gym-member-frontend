@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
 import { ArrowLeft, CalendarCheck, UserRound } from "lucide-react";
+import { FeatureMotionDirector } from "@/components/motion/feature-motion-director";
 import {
   bookPersonalTraining,
   cancelCourseEnrollment,
@@ -154,7 +155,8 @@ export default function CoursesPage() {
   };
 
   return (
-    <main className="feature-page" aria-label="课程预约">
+    <main className="feature-page feature-motion-page feature-motion-booking" aria-label="课程预约">
+      <FeatureMotionDirector variant="booking" />
       <div className="feature-shell wide">
         <Link className="feature-back" href="/">
           <ArrowLeft size={18} />

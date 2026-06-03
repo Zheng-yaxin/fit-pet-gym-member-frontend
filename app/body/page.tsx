@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { ArrowLeft, LineChart, Save } from "lucide-react";
+import { FeatureMotionDirector } from "@/components/motion/feature-motion-director";
 import { getHealthDataHistory, getLatestHealthData, saveHealthData, type HealthData } from "@/lib/member-api";
 import { calculateAge } from "@/lib/home-model";
 import "../feature-placeholder.css";
@@ -83,7 +84,8 @@ export default function BodyPage() {
   }, [reversedHistory]);
 
   return (
-    <main className="feature-page" aria-label="身体记录">
+    <main className="feature-page feature-motion-page feature-motion-body" aria-label="身体记录">
+      <FeatureMotionDirector variant="body" />
       <div className="feature-shell wide">
         <Link className="feature-back" href="/"><ArrowLeft size={18} />返回首页</Link>
         <section className="feature-panel">

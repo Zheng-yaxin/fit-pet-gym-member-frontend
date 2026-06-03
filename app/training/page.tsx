@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
 import { ArrowLeft, Dumbbell, Plus, Save } from "lucide-react";
+import { FeatureMotionDirector } from "@/components/motion/feature-motion-director";
 import {
   addTrainingLog,
   generateTrainingPlan,
@@ -70,7 +71,8 @@ export default function TrainingPage() {
   };
 
   return (
-    <main className="feature-page" aria-label="训练管理">
+    <main className="feature-page feature-motion-page feature-motion-training" aria-label="训练管理">
+      <FeatureMotionDirector variant="training" />
       <div className="feature-shell wide">
         <Link className="feature-back" href="/"><ArrowLeft size={18} />返回首页</Link>
         <section className="feature-panel">

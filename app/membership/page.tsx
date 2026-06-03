@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ArrowLeft, CreditCard, Crown, Sparkles, Zap } from "lucide-react";
+import { FeatureMotionDirector } from "@/components/motion/feature-motion-director";
 import {
   buyMemberCard,
   getMemberProfile,
@@ -112,7 +113,8 @@ export default function MembershipPage() {
   };
 
   return (
-    <main className="feature-page" aria-label="会员卡">
+    <main className="feature-page feature-motion-page feature-motion-membership" aria-label="会员卡">
+      <FeatureMotionDirector variant="membership" />
       <div className="feature-shell wide">
         <Link className="feature-back" href="/profile"><ArrowLeft size={18} />返回个人中心</Link>
         <section className="feature-panel">

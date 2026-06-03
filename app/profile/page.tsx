@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, CreditCard, Dumbbell, LogOut, RefreshCcw, Settings, UserRound, WalletCards, Wrench } from "lucide-react";
+import { FeatureMotionDirector } from "@/components/motion/feature-motion-director";
 import { ApiError, isAuthStatus } from "@/lib/api-client";
 import { logout } from "@/lib/auth-api";
 import { clearAuthSession, hasMemberSession } from "@/lib/auth-store";
@@ -166,7 +167,8 @@ export default function ProfilePage() {
   const displayName = data?.profile?.nickname || data?.profile?.name || data?.profile?.username || "Fit-Pet 会员";
 
   return (
-    <main className="profile-page" aria-label="个人主页">
+    <main className="profile-page feature-motion-page feature-motion-profile" aria-label="个人主页">
+      <FeatureMotionDirector variant="profile" />
       <div className="profile-shell">
         <header className="profile-header">
           <Link href="/" className="profile-back">

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { ArrowLeft, Camera, Flame, Plus, Info, Loader2, Check } from "lucide-react";
+import { FeatureMotionDirector } from "@/components/motion/feature-motion-director";
 import {
   addCustomFood,
   analyzeFoodImage,
@@ -144,7 +145,8 @@ export default function HealthPage() {
   const totalCal = analysis?.caloriesPer100g ? ((Number(analysis.caloriesPer100g) * Number(estWeight)) / 100).toFixed(1) : null;
 
   return (
-    <main className="feature-page" aria-label="饮食记录">
+    <main className="feature-page feature-motion-page feature-motion-nutrition" aria-label="饮食记录">
+      <FeatureMotionDirector variant="nutrition" />
       <div className="feature-shell wide">
         <Link className="feature-back" href="/"><ArrowLeft size={18} />返回首页</Link>
         <section className="feature-panel">

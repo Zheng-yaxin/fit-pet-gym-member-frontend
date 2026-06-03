@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { ArrowLeft, Flame, MapPin, RefreshCcw, Thermometer } from "lucide-react";
+import { FeatureMotionDirector } from "@/components/motion/feature-motion-director";
 import { getCurrentTraffic, getTrafficHeatmap, type TrafficSnapshot } from "@/lib/member-api";
 import "../feature-placeholder.css";
 
@@ -42,7 +43,8 @@ export default function VenuePage() {
   useEffect(() => { load(); }, []);
 
   return (
-    <main className="feature-page" aria-label="场馆状态">
+    <main className="feature-page feature-motion-page feature-motion-venue" aria-label="场馆状态">
+      <FeatureMotionDirector variant="venue" />
       <div className="feature-shell wide">
         <Link className="feature-back" href="/"><ArrowLeft size={18} />返回首页</Link>
         <section className="feature-panel">
