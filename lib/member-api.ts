@@ -239,9 +239,27 @@ export type PersonalTrainingBooking = {
 
 export type TrafficSnapshot = {
   id?: number;
+  areaId?: number;
   areaName?: string;
   currentCount?: number;
   capacity?: number;
+  heatLevel?: number;
+  snapshotTime?: string;
+};
+
+export type TrafficRecommendation = {
+  areaId?: number;
+  areaName?: string;
+  location?: string;
+  currentCount?: number;
+  capacity?: number;
+  occupancyPercent?: number;
+  score?: number;
+  priority?: number;
+  statusLabel?: string;
+  bestFor?: string;
+  reason?: string;
+  action?: string;
   snapshotTime?: string;
 };
 
@@ -505,6 +523,13 @@ export function getCurrentTraffic() {
 
 export function getTrafficHeatmap() {
   return apiRequest<TrafficSnapshot[]>("/gym/traffic/heatmap");
+}
+
+export function getTrafficRecommendations(goal = "", limit = 5) {
+  const query = new URLSearchParams();
+  if (goal) query.set("goal", goal);
+  query.set("limit", String(limit));
+  return apiRequest<TrafficRecommendation[]>(`/gym/traffic/recommendations?${query.toString()}`);
 }
 
 export function getValidMemberCard(memberId: number) {

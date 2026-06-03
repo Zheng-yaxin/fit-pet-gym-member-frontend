@@ -2,10 +2,16 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, Flame, MapPin, RefreshCcw, Thermometer } from "lucide-react";
+import { ArrowLeft, Flame, MapPin, RefreshCcw, Sparkles, Thermometer } from "lucide-react";
 import { FeatureMotionDirector } from "@/components/motion/feature-motion-director";
 import { FeatureStatusCard } from "@/components/motion/feature-status-card";
-import { getCurrentTraffic, getTrafficHeatmap, type TrafficSnapshot } from "@/lib/member-api";
+import {
+  getCurrentTraffic,
+  getTrafficHeatmap,
+  getTrafficRecommendations,
+  type TrafficRecommendation,
+  type TrafficSnapshot
+} from "@/lib/member-api";
 import "../feature-placeholder.css";
 
 function ratio(item: TrafficSnapshot) {
@@ -23,6 +29,8 @@ function heatColor(percent: number) {
 export default function VenuePage() {
   const [current, setCurrent] = useState<TrafficSnapshot[]>([]);
   const [heatmap, setHeatmap] = useState<TrafficSnapshot[]>([]);
+  const [recommendations, setRecommendations] = useState<TrafficRecommendation[]>([]);
+  const [goal, setGoal] = useState("strength");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const busiest = useMemo(() => current.toSorted((a, b) => (b.currentCount ?? 0) - (a.currentCount ?? 0))[0], [current]);
@@ -31,9 +39,14 @@ export default function VenuePage() {
     setLoading(true);
     setError("");
     try {
-      const [nextCurrent, nextHeatmap] = await Promise.all([getCurrentTraffic(), getTrafficHeatmap()]);
+      const [nextCurrent, nextHeatmap, nextRecommendations] = await Promise.all([
+        getCurrentTraffic(),
+        getTrafficHeatmap(),
+        getTrafficRecommendations(goal, 4)
+      ]);
       setCurrent(nextCurrent ?? []);
       setHeatmap(nextHeatmap ?? []);
+      setRecommendations(nextRecommendations ?? []);
     } catch (err) {
       setError(err instanceof Error ? err.message : "场馆数据加载失败。");
     } finally {
@@ -41,7 +54,7 @@ export default function VenuePage() {
     }
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, [goal]);
 
   return (
     <main className="feature-page feature-motion-page feature-motion-venue" aria-label="场馆状态">
@@ -59,8 +72,48 @@ export default function VenuePage() {
           {loading ? <FeatureStatusCard title="场馆地图正在点亮" detail="正在同步实时人流和全天热力样本。" /> : null}
 
           <div className="feature-toolbar">
+            {[
+              ["strength", "Strength"],
+              ["cardio", "Cardio"],
+              ["mobility", "Mobility"],
+              ["general", "General"]
+            ].map(([value, label]) => (
+              <button
+                key={value}
+                type="button"
+                className={goal === value ? "is-active" : ""}
+                onClick={() => setGoal(value)}
+              >
+                <Sparkles size={16} />{label}
+              </button>
+            ))}
             <button type="button" onClick={load} disabled={loading}><RefreshCcw size={16} />刷新</button>
           </div>
+
+          <article className="feature-list">
+            <span><Sparkles size={16} />Smart route picks</span>
+            {recommendations.map((item, index) => {
+              const percent = item.occupancyPercent ?? 0;
+              const h = heatColor(percent);
+              return (
+                <div className="feature-row" key={item.areaId ?? `${item.areaName}-${index}`}>
+                  <div style={{ width: 42, height: 42, borderRadius: 14, background: h.glow, color: h.bg, display: "grid", placeItems: "center", fontWeight: 800 }}>
+                    {index + 1}
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <h3>{item.areaName ?? "Training area"} <small style={{ color: h.bg }}>· {item.statusLabel ?? h.text}</small></h3>
+                    <p style={{ margin: "4px 0" }}>{item.reason ?? "Traffic is suitable for a focused block."}</p>
+                    <p style={{ margin: 0, color: "var(--muted)", fontSize: 12 }}>{item.action ?? "Start the next training block here."}</p>
+                  </div>
+                  <div style={{ textAlign: "right", minWidth: 74 }}>
+                    <b style={{ color: h.bg, fontSize: 20 }}>{item.score ?? Math.max(0, 100 - percent)}</b>
+                    <p style={{ margin: "2px 0 0", color: "var(--muted)", fontSize: 12 }}>{percent}% full</p>
+                  </div>
+                </div>
+              );
+            })}
+            {!recommendations.length ? <p>{loading ? "Loading smart picks..." : "No recommendation data yet."}</p> : null}
+          </article>
 
           <div className="feature-grid three">
             <article className="feature-data"><span>监控区域</span><h2>{current.length}</h2><p>当前快照</p></article>
