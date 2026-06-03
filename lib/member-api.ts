@@ -124,7 +124,25 @@ export type TrainingLog = {
   remark?: string;
 };
 
-// removed: TrainingCheckin
+export type TrainingReview = {
+  memberId?: number;
+  todayMinutes?: number;
+  todayCalories?: number;
+  todaySessions?: number;
+  weeklyMinutes?: number;
+  weeklyCalories?: number;
+  weeklySessions?: number;
+  totalSessions?: number;
+  streakDays?: number;
+  xpEarned?: number;
+  level?: number;
+  progressPercent?: number;
+  badgeTitle?: string;
+  mood?: string;
+  review?: string;
+  nextAction?: string;
+  suggestions?: string[];
+};
 
 export type TrainingPlan = {
   id?: number;
@@ -391,6 +409,10 @@ export function deleteBodyImage(id: number) {
 
 export function getTrainingLogs() {
   return apiRequest<TrainingLog[]>("/training/logs");
+}
+
+export function getTrainingReview() {
+  return apiRequest<TrainingReview>("/training/review");
 }
 
 export function getCurrentTrainingPlan() {
