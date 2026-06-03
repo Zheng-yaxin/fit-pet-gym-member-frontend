@@ -1,0 +1,214 @@
+.root {
+  --fit-bg-x: 0;
+  --fit-bg-y: 0;
+  --fit-bg-tilt: 0;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  contain: layout paint;
+}
+
+.paper,
+.mesh {
+  position: absolute;
+  inset: -10%;
+}
+
+.paper {
+  background:
+    radial-gradient(circle at 18% 24%, rgba(255, 249, 236, 0.92), transparent 18%),
+    radial-gradient(circle at 78% 16%, rgba(116, 223, 168, 0.3), transparent 20%),
+    radial-gradient(circle at 88% 74%, rgba(245, 155, 188, 0.22), transparent 24%),
+    radial-gradient(circle at 18% 86%, rgba(246, 200, 76, 0.22), transparent 20%);
+  transform: translate3d(calc(var(--fit-bg-x) * -0.35px), calc(var(--fit-bg-y) * -0.25px), 0) rotate(calc(var(--fit-bg-tilt) * -0.12deg));
+  will-change: transform;
+}
+
+.mesh {
+  opacity: 0.62;
+  background:
+    linear-gradient(90deg, rgba(32, 36, 45, 0.05) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(32, 36, 45, 0.05) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(circle at 50% 45%, rgba(0, 0, 0, 0.8), transparent 70%);
+  transform: translate3d(calc(var(--fit-bg-x) * 0.18px), calc(var(--fit-bg-y) * 0.16px), 0);
+  will-change: transform;
+}
+
+.magnetField {
+  position: absolute;
+  inset: 0;
+  opacity: 0.74;
+  transform: translate3d(calc(var(--fit-bg-x) * 0.5px), calc(var(--fit-bg-y) * 0.38px), 0);
+  will-change: transform;
+}
+
+.magnetLine {
+  position: absolute;
+  width: 58px;
+  height: 10px;
+  border: 2px solid var(--fit-line);
+  border-radius: 999px;
+  background: linear-gradient(90deg, #fff9ec, #dff3ff 54%, #fff0bc);
+  box-shadow: 0 5px 0 rgba(32, 36, 45, 0.08);
+  opacity: 0.46;
+  transform: rotate(var(--line-rotate));
+  transform-origin: 50% 50%;
+  will-change: transform;
+  animation: line-pop 4.8s var(--fit-ease-out) infinite alternate;
+  animation-delay: var(--line-delay);
+}
+
+.token {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  border: 3px solid var(--fit-line);
+  border-radius: 28px;
+  background: var(--token-bg);
+  box-shadow: 0 12px 0 rgba(32, 36, 45, 0.12), 0 22px 30px rgba(32, 36, 45, 0.08);
+  opacity: 0;
+  transform:
+    translate3d(calc(var(--fit-bg-x) * var(--token-depth) * 1px), calc(var(--fit-bg-y) * var(--token-depth) * 1px), 0)
+    rotate(calc(var(--token-rotate) + var(--fit-bg-tilt) * 0.5deg));
+  transform-origin: 50% 70%;
+  will-change: transform, opacity;
+}
+
+.token svg {
+  width: 72%;
+  height: 72%;
+  overflow: visible;
+}
+
+.sizeSm {
+  width: 74px;
+  height: 74px;
+  border-radius: 24px;
+}
+
+.sizeMd {
+  width: 106px;
+  height: 106px;
+}
+
+.sizeLg {
+  width: 142px;
+  height: 142px;
+  border-radius: 38px;
+}
+
+.toneMint {
+  --token-bg: #dcffe9;
+  --token-fill: #74dfa8;
+  --token-light: #fff9ec;
+}
+
+.toneBlue {
+  --token-bg: #dff3ff;
+  --token-fill: #77c5e8;
+  --token-light: #fff9ec;
+}
+
+.toneYolk {
+  --token-bg: #fff0bc;
+  --token-fill: #f6c84c;
+  --token-light: #fff9ec;
+}
+
+.toneCoral {
+  --token-bg: #ffe1dc;
+  --token-fill: #f48276;
+  --token-light: #fff9ec;
+}
+
+.tonePink {
+  --token-bg: #ffe0ec;
+  --token-fill: #f59bbc;
+  --token-light: #fff9ec;
+}
+
+.strokeFill,
+.strokeFillLight {
+  stroke: var(--fit-line);
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.strokeFill {
+  fill: var(--token-fill);
+}
+
+.strokeFillLight {
+  fill: var(--token-light);
+}
+
+.strokeOnly,
+.strokeOnlyThin {
+  fill: none;
+  stroke: var(--fit-line);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.strokeOnly {
+  stroke-width: 6;
+}
+
+.strokeOnlyThin {
+  stroke-width: 4;
+}
+
+@keyframes line-pop {
+  from {
+    opacity: 0.22;
+    transform: rotate(var(--line-rotate)) scaleX(0.72);
+  }
+
+  to {
+    opacity: 0.62;
+    transform: rotate(calc(var(--line-rotate) + 10deg)) scaleX(1.18);
+  }
+}
+
+@media (max-width: 760px) {
+  .magnetLine:nth-child(n + 17),
+  .token:nth-of-type(n + 8) {
+    display: none;
+  }
+
+  .sizeLg {
+    width: 108px;
+    height: 108px;
+    border-radius: 30px;
+  }
+
+  .sizeMd {
+    width: 86px;
+    height: 86px;
+  }
+
+  .sizeSm {
+    width: 62px;
+    height: 62px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .paper,
+  .mesh,
+  .magnetField,
+  .magnetLine,
+  .token {
+    animation: none;
+    transform: none;
+    transition: none;
+  }
+
+  .token {
+    opacity: 0.46;
+  }
+}

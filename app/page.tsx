@@ -9,6 +9,7 @@ import { CharacterStage } from "@/components/home/character-stage";
 import { DailyFocus } from "@/components/home/daily-focus";
 import { HomeActionGrid } from "@/components/home/home-action-grid";
 import { HomeSkeleton } from "@/components/home/home-skeleton";
+import { KineticGymBackground } from "@/components/home/kinetic-gym-background";
 import { ProfileAvatarButton } from "@/components/home/profile-avatar-button";
 import { ApiError, isAuthStatus } from "@/lib/api-client";
 import { clearAuthSession, hasMemberSession } from "@/lib/auth-store";
@@ -166,6 +167,7 @@ export default function Home() {
 
   return (
     <main className="home-page" aria-label="Fit-Pet 会员健康首页">
+      <KineticGymBackground />
       <div className="home-shell">
         <header className="home-topbar">
           <div className="brand-area">
