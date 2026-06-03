@@ -10,8 +10,8 @@ export function HomeSkeleton({ gender = "girl" }: HomeSkeletonProps) {
     <div className="home-skeleton" aria-label="首页加载中">
       <LoadingScreen
         gender={gender}
-        title="健身伙伴正在跑步热身"
-        message="正在把你的首页数据排好队，马上开练。"
+        title="小爪印正在热身"
+        message="正在把训练、饮食和场馆状态排成可爱的队形。"
       />
     </div>
   );

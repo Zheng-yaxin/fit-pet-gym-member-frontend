@@ -6,7 +6,7 @@ import gsap from "gsap";
 
 import styles from "./kinetic-gym-background.module.css";
 
-type TokenKind = "pet" | "dumbbell" | "mat" | "bottle" | "medal" | "paw";
+type TokenKind = "pet" | "dumbbell" | "mat" | "bottle" | "medal" | "paw" | "rope" | "shoe" | "heart" | "towel";
 
 type Token = {
   kind: TokenKind;
@@ -26,7 +26,11 @@ const tokens: Token[] = [
   { kind: "medal", tone: "coral", size: "md", left: "38%", top: "7%", depth: 0.75, rotate: 6 },
   { kind: "paw", tone: "mint", size: "sm", left: "58%", top: "82%", depth: 1.45, rotate: -10 },
   { kind: "dumbbell", tone: "yolk", size: "sm", left: "92%", top: "25%", depth: 1.15, rotate: -24 },
-  { kind: "pet", tone: "blue", size: "md", left: "9%", top: "51%", depth: 0.85, rotate: 16 }
+  { kind: "pet", tone: "blue", size: "md", left: "9%", top: "51%", depth: 0.85, rotate: 16 },
+  { kind: "rope", tone: "coral", size: "lg", left: "47%", top: "22%", depth: 1.3, rotate: -18 },
+  { kind: "shoe", tone: "mint", size: "md", left: "27%", top: "19%", depth: 0.95, rotate: -9 },
+  { kind: "heart", tone: "pink", size: "sm", left: "75%", top: "80%", depth: 1.52, rotate: 18 },
+  { kind: "towel", tone: "blue", size: "sm", left: "32%", top: "88%", depth: 1.12, rotate: 12 }
 ];
 
 export function KineticGymBackground() {
@@ -121,6 +125,7 @@ export function KineticGymBackground() {
     <div className={styles.root} ref={rootRef} aria-hidden="true">
       <div className={styles.paper} />
       <div className={styles.mesh} />
+      <div className={styles.cabinGlow} />
 
       <div className={styles.magnetField}>
         {Array.from({ length: 30 }).map((_, index) => (
@@ -132,6 +137,23 @@ export function KineticGymBackground() {
                 top: `${12 + Math.floor(index / 10) * 29}%`,
                 "--line-rotate": `${(index % 6) * 13 - 30}deg`,
                 "--line-delay": `${index * 28}ms`
+              } as CSSProperties
+            }
+            key={index}
+          />
+        ))}
+      </div>
+
+      <div className={styles.speedBursts}>
+        {Array.from({ length: 10 }).map((_, index) => (
+          <i
+            className={styles.speedBurst}
+            style={
+              {
+                left: `${10 + (index % 5) * 20}%`,
+                top: `${20 + Math.floor(index / 5) * 48}%`,
+                "--burst-delay": `${index * 90}ms`,
+                "--burst-rotate": `${index % 2 === 0 ? -10 : 12}deg`
               } as CSSProperties
             }
             key={index}
@@ -214,6 +236,47 @@ function TokenIcon({ kind }: { kind: TokenKind }) {
         <path d="M33 14L46 39M63 14L50 39" className={styles.strokeOnly} />
         <circle cx="48" cy="58" r="23" className={styles.strokeFill} />
         <path d="M48 45L52 54L62 55L55 62L57 72L48 67L39 72L41 62L34 55L44 54Z" className={styles.strokeFillLight} />
+      </svg>
+    );
+  }
+
+  if (kind === "rope") {
+    return (
+      <svg viewBox="0 0 96 96" role="presentation">
+        <path d="M25 27C12 45 18 74 43 78C69 82 86 61 76 35" className={styles.strokeOnly} />
+        <path d="M19 22L31 33M77 23L66 35" className={styles.strokeOnly} />
+        <rect x="13" y="13" width="15" height="24" rx="7" className={styles.strokeFill} />
+        <rect x="68" y="14" width="15" height="24" rx="7" className={styles.strokeFill} />
+        <path d="M39 55C43 51 52 51 57 55" className={styles.strokeOnlyThin} />
+      </svg>
+    );
+  }
+
+  if (kind === "shoe") {
+    return (
+      <svg viewBox="0 0 96 96" role="presentation">
+        <path d="M23 56C35 56 43 47 49 34C57 42 64 47 75 49C84 50 88 57 84 66C80 74 63 77 47 72L25 65C18 63 17 56 23 56Z" className={styles.strokeFill} />
+        <path d="M29 56L41 65M43 50L54 58M52 44L62 51" className={styles.strokeOnlyThin} />
+        <path d="M21 65C36 73 63 78 82 67" className={styles.strokeOnly} />
+      </svg>
+    );
+  }
+
+  if (kind === "heart") {
+    return (
+      <svg viewBox="0 0 96 96" role="presentation">
+        <path d="M48 77C31 64 20 53 20 39C20 28 28 21 38 21C44 21 48 25 50 30C53 25 58 21 65 21C76 21 83 30 81 42C79 55 65 67 48 77Z" className={styles.strokeFill} />
+        <path d="M36 38C39 34 43 34 46 38" className={styles.strokeOnlyThin} />
+      </svg>
+    );
+  }
+
+  if (kind === "towel") {
+    return (
+      <svg viewBox="0 0 96 96" role="presentation">
+        <path d="M26 20H62C70 20 76 26 76 34V77H27C22 77 18 73 18 68V28C18 24 22 20 26 20Z" className={styles.strokeFill} />
+        <path d="M62 20C56 23 54 28 54 36V68C54 73 58 77 63 77" className={styles.strokeOnly} />
+        <path d="M29 36H48M29 49H48M29 62H48" className={styles.strokeOnlyThin} />
       </svg>
     );
   }
