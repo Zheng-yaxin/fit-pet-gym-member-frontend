@@ -124,6 +124,16 @@ export type TrainingLog = {
   remark?: string;
 };
 
+export type TrainingCheckin = {
+  id?: number;
+  memberId?: number;
+  planId?: number;
+  startTime?: string;
+  endTime?: string;
+  durationMinutes?: number;
+  status?: "0" | "1" | string;
+};
+
 export type TrainingReview = {
   memberId?: number;
   todayMinutes?: number;
@@ -444,9 +454,22 @@ export function generateTrainingPlan(payload: TrainingPlanPayload) {
   });
 }
 
-// removed
+export function getActiveTrainingCheckin() {
+  return apiRequest<TrainingCheckin | null>("/training/checkin/active");
+}
 
-// removed
+export function startTrainingCheckin(planId?: number) {
+  const suffix = planId ? `?planId=${encodeURIComponent(String(planId))}` : "";
+  return apiRequest<TrainingCheckin>(`/training/checkin/start${suffix}`, {
+    method: "POST"
+  });
+}
+
+export function endTrainingCheckin(checkinId: number) {
+  return apiRequest<TrainingCheckin>(`/training/checkin/end?checkinId=${encodeURIComponent(String(checkinId))}`, {
+    method: "POST"
+  });
+}
 
 export function addTrainingLog(log: TrainingLog) {
   return apiRequest<void>("/training/logs", {

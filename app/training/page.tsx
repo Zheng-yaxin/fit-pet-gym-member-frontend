@@ -2,15 +2,19 @@
 
 import Link from "next/link";
 import { FormEvent, useEffect, useMemo, useState } from "react";
-import { ArrowLeft, Dumbbell, Plus, Save, Sparkles } from "lucide-react";
+import { ArrowLeft, Clock3, Dumbbell, Play, Plus, Save, Sparkles, Square } from "lucide-react";
 import { FeatureMotionDirector } from "@/components/motion/feature-motion-director";
 import { FeatureStatusCard } from "@/components/motion/feature-status-card";
 import {
   addTrainingLog,
+  endTrainingCheckin,
   generateTrainingPlan,
+  getActiveTrainingCheckin,
   getCurrentTrainingPlan,
   getTrainingLogs,
   getTrainingReview,
+  startTrainingCheckin,
+  type TrainingCheckin,
   type TrainingLog,
   type TrainingPlan,
   type TrainingReview
@@ -24,10 +28,22 @@ function numberValue(value: number | undefined, fallback = 0) {
   return typeof value === "number" ? value : fallback;
 }
 
+function formatElapsed(startTime?: string, now = Date.now()) {
+  if (!startTime) return "00:00";
+  const start = new Date(startTime).getTime();
+  if (Number.isNaN(start)) return "00:00";
+  const minutes = Math.max(0, Math.floor((now - start) / 60000));
+  const hours = Math.floor(minutes / 60);
+  const rest = minutes % 60;
+  return `${String(hours).padStart(2, "0")}:${String(rest).padStart(2, "0")}`;
+}
+
 export default function TrainingPage() {
   const [plan, setPlan] = useState<TrainingPlan | null>(null);
   const [logs, setLogs] = useState<TrainingLog[]>([]);
   const [review, setReview] = useState<TrainingReview | null>(null);
+  const [activeCheckin, setActiveCheckin] = useState<TrainingCheckin | null>(null);
+  const [clockTick, setClockTick] = useState(Date.now());
   const [goal, setGoal] = useState(goals[0]);
   const [weeklyFrequency, setWeeklyFrequency] = useState(3);
   const [durationMinutes, setDurationMinutes] = useState("45");
@@ -56,14 +72,16 @@ export default function TrainingPage() {
     setLoading(true);
     setError("");
     try {
-      const [nextPlan, nextLogs, nextReview] = await Promise.all([
+      const [nextPlan, nextLogs, nextReview, nextActiveCheckin] = await Promise.all([
         getCurrentTrainingPlan(),
         getTrainingLogs(),
-        getTrainingReview()
+        getTrainingReview(),
+        getActiveTrainingCheckin()
       ]);
       setPlan(nextPlan);
       setLogs(nextLogs ?? []);
       setReview(nextReview);
+      setActiveCheckin(nextActiveCheckin);
     } catch (err) {
       setError(err instanceof Error ? err.message : "训练数据加载失败。");
     } finally {
@@ -74,6 +92,12 @@ export default function TrainingPage() {
   useEffect(() => {
     load();
   }, []);
+
+  useEffect(() => {
+    if (!activeCheckin?.startTime) return undefined;
+    const timer = window.setInterval(() => setClockTick(Date.now()), 30000);
+    return () => window.clearInterval(timer);
+  }, [activeCheckin?.startTime]);
 
   const handleGenerate = async (event: FormEvent) => {
     event.preventDefault();
@@ -107,6 +131,35 @@ export default function TrainingPage() {
       await load();
     } catch (err) {
       setError(err instanceof Error ? err.message : "保存训练日志失败。");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleStartCheckin = async () => {
+    setBusy(true);
+    setError("");
+    try {
+      setActiveCheckin(await startTrainingCheckin(plan?.id));
+      setClockTick(Date.now());
+      await load();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "开始训练打卡失败。");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleEndCheckin = async () => {
+    if (!activeCheckin?.id) return;
+    setBusy(true);
+    setError("");
+    try {
+      await endTrainingCheckin(activeCheckin.id);
+      setActiveCheckin(null);
+      await load();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "结束训练打卡失败。");
     } finally {
       setBusy(false);
     }
@@ -180,6 +233,38 @@ export default function TrainingPage() {
                 <li key={item}>{item}</li>
               ))}
             </ul>
+          </section>
+
+          <section className="fitpet-executor-panel" aria-label="训练执行器">
+            <div className="fitpet-executor-copy">
+              <span className="fitpet-review-badge">
+                <Clock3 size={16} />
+                Training Timer
+              </span>
+              <h2>{activeCheckin ? "训练进行中" : "开始一组真实训练"}</h2>
+              <p>
+                {activeCheckin
+                  ? "结束后会自动写入训练日志，并立即刷新今日复盘、经验值和连续训练天数。"
+                  : "从当前计划进入训练执行器，系统会保留进行中的打卡，避免重复开始。"}
+              </p>
+            </div>
+            <div className="fitpet-executor-meter">
+              <strong>{formatElapsed(activeCheckin?.startTime, clockTick)}</strong>
+              <span>{activeCheckin?.startTime ? `Started ${activeCheckin.startTime.slice(11, 16)}` : "Ready"}</span>
+            </div>
+            <div className="fitpet-executor-actions">
+              {activeCheckin ? (
+                <button type="button" onClick={handleEndCheckin} disabled={busy}>
+                  <Square size={15} />
+                  结束并生成日志
+                </button>
+              ) : (
+                <button type="button" onClick={handleStartCheckin} disabled={busy}>
+                  <Play size={15} />
+                  开始训练
+                </button>
+              )}
+            </div>
           </section>
 
           <div className="feature-grid two">
