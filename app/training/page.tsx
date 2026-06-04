@@ -11,10 +11,12 @@ import {
   generateTrainingPlan,
   getActiveTrainingCheckin,
   getCurrentTrainingPlan,
+  getTrainingGrowth,
   getTrainingLogs,
   getTrainingReview,
   startTrainingCheckin,
   type TrainingCheckin,
+  type TrainingGrowth,
   type TrainingLog,
   type TrainingPlan,
   type TrainingReview
@@ -42,6 +44,7 @@ export default function TrainingPage() {
   const [plan, setPlan] = useState<TrainingPlan | null>(null);
   const [logs, setLogs] = useState<TrainingLog[]>([]);
   const [review, setReview] = useState<TrainingReview | null>(null);
+  const [growth, setGrowth] = useState<TrainingGrowth | null>(null);
   const [activeCheckin, setActiveCheckin] = useState<TrainingCheckin | null>(null);
   const [clockTick, setClockTick] = useState(Date.now());
   const [goal, setGoal] = useState(goals[0]);
@@ -56,7 +59,10 @@ export default function TrainingPage() {
 
   const todayMinutes = numberValue(review?.todayMinutes);
   const weeklyMinutes = numberValue(review?.weeklyMinutes);
-  const levelProgress = numberValue(review?.progressPercent);
+  const levelProgress = numberValue(growth?.progressPercent ?? review?.progressPercent);
+  const level = numberValue(growth?.level ?? review?.level, 1);
+  const streakDays = numberValue(growth?.streakDays ?? review?.streakDays);
+  const badgeTitle = growth?.badgeTitle ?? review?.badgeTitle;
 
   const weeklyProgressStyle = useMemo(
     () => ({ width: `${Math.min(100, Math.round((weeklyMinutes / 150) * 100))}%` }),
@@ -72,15 +78,17 @@ export default function TrainingPage() {
     setLoading(true);
     setError("");
     try {
-      const [nextPlan, nextLogs, nextReview, nextActiveCheckin] = await Promise.all([
+      const [nextPlan, nextLogs, nextReview, nextGrowth, nextActiveCheckin] = await Promise.all([
         getCurrentTrainingPlan(),
         getTrainingLogs(),
         getTrainingReview(),
+        getTrainingGrowth(),
         getActiveTrainingCheckin()
       ]);
       setPlan(nextPlan);
       setLogs(nextLogs ?? []);
       setReview(nextReview);
+      setGrowth(nextGrowth);
       setActiveCheckin(nextActiveCheckin);
     } catch (err) {
       setError(err instanceof Error ? err.message : "训练数据加载失败。");
@@ -202,8 +210,8 @@ export default function TrainingPage() {
             </article>
             <article className="feature-data">
               <span>连续训练</span>
-              <h2>{numberValue(review?.streakDays)} 天</h2>
-              <p>{review?.badgeTitle ?? "热身起步徽章"}</p>
+              <h2>{streakDays} 天</h2>
+              <p>{badgeTitle ?? "热身起步徽章"}</p>
             </article>
           </div>
 
@@ -211,7 +219,7 @@ export default function TrainingPage() {
             <div className="fitpet-review-main">
               <span className="fitpet-review-badge">
                 <Sparkles size={16} />
-                Lv.{numberValue(review?.level, 1)}
+                Lv.{level}
               </span>
               <h2>{review?.review ?? "完成一次训练后，这里会生成今日复盘。"}</h2>
               <p>{review?.nextAction ?? "先做 10 分钟热身和基础力量循环。"}</p>
@@ -224,8 +232,13 @@ export default function TrainingPage() {
               </div>
               <div>
                 <span>等级经验</span>
-                <strong>{levelProgress}%</strong>
+                <strong>{growth?.currentLevelXp ?? "--"}/{growth?.nextLevelXp ?? 500} XP</strong>
                 <i><b style={levelProgressStyle} /></i>
+              </div>
+              <div>
+                <span>Last reward</span>
+                <strong>+{numberValue(growth?.lastRewardXp)} XP</strong>
+                <i><b style={{ width: `${Math.min(100, numberValue(growth?.lastRewardXp))}%` }} /></i>
               </div>
             </div>
             <ul className="fitpet-review-list">

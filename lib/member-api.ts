@@ -154,6 +154,24 @@ export type TrainingReview = {
   suggestions?: string[];
 };
 
+export type TrainingGrowth = {
+  memberId?: number;
+  totalXp?: number;
+  level?: number;
+  currentLevelXp?: number;
+  nextLevelXp?: number;
+  progressPercent?: number;
+  streakDays?: number;
+  totalSessions?: number;
+  weeklyMinutes?: number;
+  weeklySessions?: number;
+  lastTrainingDate?: string;
+  petMood?: string;
+  badgeTitle?: string;
+  lastRewardXp?: number;
+  lastRewardReason?: string;
+};
+
 export type TrainingPlan = {
   id?: number;
   name?: string;
@@ -441,6 +459,10 @@ export function getTrainingLogs() {
 
 export function getTrainingReview() {
   return apiRequest<TrainingReview>("/training/review");
+}
+
+export function getTrainingGrowth() {
+  return apiRequest<TrainingGrowth>("/training/growth");
 }
 
 export function getCurrentTrainingPlan() {
